@@ -89,12 +89,16 @@ export const login = catchAsync(async (req, res, next) => {
   // 4. Guardar el Refresh Token en la base de datos
   await UserModel.updateRefreshToken(user.id, refreshToken);
 
+  // 4.5 Obtener los roles del usuario desde la Data Base 
+  const roles = await UserModel.getRolesWithPermissions(user.id);
+
   // 5. Limpieza: No devolvemos la contraseña al Frontend
   const { password: _, refresh_token: __, ...userWithoutSensitiveData } = user;
 
   // 6. Respondemos con éxito entregando los tokens y los datos del usuario
   return successResponse(res, 200, "Inicio de sesión exitoso", {
     user: userWithoutSensitiveData,
+    roles,
     accessToken,
     refreshToken
   });
