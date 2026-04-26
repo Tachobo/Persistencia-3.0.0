@@ -51,4 +51,35 @@ export const UserModel = {
     const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
     return rows[0]; // Retorna el usuario o undefined
   },
+  
+   // 6. Obtener los roles y permisos completos de un usuario
+  getRolesWithPermissions: async (userId) => {
+    const [rows] = await pool.query(
+      `SELECT 
+        r.name  AS role_name,
+        p.name  AS permission_name
+      FROM user_roles ur
+      JOIN roles r             ON ur.role_id       = r.id
+      JOIN role_permissions rp ON rp.role_id       = r.id
+      JOIN permissions p       ON rp.permission_id = p.id
+      WHERE ur.user_id = ?`,
+      [userId]
+    );
+
+    const rolesMap = {};
+
+    for (const row of rows) {
+      if (!rolesMap[row.role_name]) {
+        rolesMap[row.role_name] = {
+          role: row.role_name,
+          permissions: [],
+        };
+      }
+      rolesMap[row.role_name].permissions.push(row.permission_name);
+    }
+
+    return Object.values(rolesMap);
+  },
 };
+
+

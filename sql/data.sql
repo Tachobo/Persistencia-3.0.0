@@ -169,3 +169,35 @@ INSERT INTO products (id, name, category_id, price) VALUES
 (98, 'Asistente Amazon Echo Dot 5ta Gen', 20, 49.99),
 (99, 'Enchufe Inteligente TP-Link Tapo', 20, 15.00),
 (100, 'Cámara de Seguridad Wyze Cam v3', 20, 35.98);
+
+-- Roles base
+INSERT INTO roles (id, name) VALUES
+(1, 'admin'),
+(2, 'empleado'),
+(3, 'cliente');
+
+-- Permisos atómicos
+INSERT INTO permissions (id, name, description) VALUES
+(1, 'products.read',    'Ver lista de productos'),
+(2, 'products.create',  'Crear nuevos productos'),
+(3, 'products.update',  'Editar productos existentes'),
+(4, 'products.delete',  'Eliminar productos'),
+(5, 'categories.read',  'Ver categorías'),
+(6, 'categories.create','Crear categorías'),
+(7, 'categories.update','Editar categorías'),
+(8, 'categories.delete','Eliminar categorías');
+
+-- Admin tiene todos los permisos
+INSERT INTO role_permissions (role_id, permission_id) VALUES
+(1,1),(1,2),(1,3),(1,4),(1,5),(1,6),(1,7),(1,8);
+
+-- Empleado puede leer, crear y editar, pero NO eliminar
+INSERT INTO role_permissions (role_id, permission_id) VALUES
+(2,1),(2,2),(2,3),(2,5),(2,6),(2,7);
+
+-- Cliente solo puede leer
+INSERT INTO role_permissions (role_id, permission_id) VALUES
+(3,1),(3,5);
+
+-- Asignar rol admin al usuario con id 1
+INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);
